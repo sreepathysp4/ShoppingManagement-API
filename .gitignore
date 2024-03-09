@@ -1,0 +1,17 @@
+# Ignore the bin directory
+bin/
+
+# Ignore all .log files
+*.log
+
+# Ignore the obj directory
+obj/
+
+# Ignore user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates	
+
+# Ignore packages directory
+packages/
