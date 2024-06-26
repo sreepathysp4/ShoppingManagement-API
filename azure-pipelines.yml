@@ -15,20 +15,25 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: UseDotNet@2
   inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
+    packageType: 'sdk'
+    version: '8.0.x'
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: '*.sln'
+    arguments: '-p:Version=$(buildVersion) --no-incremental -c Release -t:Clean'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '--configuration $(BuildConfiguration) --no-restore --no-build --output $(Build.Repository.LocalPath)/publish'
+    arguments: '$(Build.Repository.LocalPath)/$(projectName)/$(projectName).csproj'
+    zipAfterPublish: false
+    workingDirectory: '$(Build.Repository.LocalPath)/'
