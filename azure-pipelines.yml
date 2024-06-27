@@ -29,6 +29,11 @@ steps:
     command: 'build'
     projects: '**/*.csproj'
     arguments: '-p:Version=$(buildVersion) --no-incremental -c Release -t:Clean'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)\Properties\PublishProfiles'
+    Contents: '**\*.pubxml'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\PublishProfiles'
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
